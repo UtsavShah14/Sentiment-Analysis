@@ -5,9 +5,18 @@
     <title>LandingPage</title>
 </head>
 <body>
-<p>This is the landing page of our site</p>
-<p>Since this is a guest site, we will not display anything here.</p>
-<p>But, you can login here</p>
-<button type="submit">Login</button>
+<!--<p>This is the landing page of our site</p>-->
+<!--<p>Since this is a guest site, we will not display anything here.</p>-->
+<!--<p>But, you can login here</p>-->
+<!--<button type="submit">Login</button>-->
+You are logged in as {{ username }}
+
+<form action="/process" method="POST">
+    <p>Enter a search text: </p><input name="search word" type="text">
+    <p>Enter a date: </p><input name="date" type="date">
+    <p><input type="submit" value="submit"></p>
+</form>
+
+<br><a href='/logout'>click here to log out</a>
 </body>
 </html>

@@ -1,28 +1,67 @@
 # import os
-import flask
+import flask as f
 import pandas as pd
 import tweepy as tw
 
 import Access_Keys
 
-app = flask.Flask(__name__)
+app = f.Flask(__name__)
 app.debug = True
+app.secret_key = 'hello'
 
 
 @app.route('/')
-def landingpage():
-    return flask.render_template('index.html')
+def index():
+    # username = ""
+    if 'username' in f.session:
+        template_values = {
+            'username': f.session['username']
+        }
+        return f.render_template('index.html', **template_values)
+        # return username
+    return "You are not logged in, please login in to continue.<br><a href = '/login'>" + "click here to login</a>"
 
 
-@app.route('/login')
-def helloworld():
-    print('Hello')
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if f.request.method == 'POST':
+        f.session['username'] = f.request.form['username']
+        return f.redirect(f.url_for('index'))
+    else:
+        return f.render_template('login.html')
+
+
+@app.route('/logout')
+def logout():
+    f.session.pop('username', None)
+    return f.redirect(f.url_for('index'))
+
+
+@app.route('/process', methods=['POST', 'GET'])
+def tweetSearch():
+    if f.request.method == 'POST':
+        search_word = f.request.form['search word']
+        date_since = f.request.form['date']
+        ts = TwitterStreamer()
+        api = ts.authenticate()
+        tweets = ts.get_tweet(search_word, date_since, api)
+        # tweets_text = ts.display_tweets(tweets)
+        for tweet in tweets:
+            print(tweet.text)
+        template_values = {
+            # tweets_text
+        }
+        # for tweet in tweets:
+        # #     print(tweet)
+        return f.render_template('index.html', **template_values)
+    else:
+        return f.render_template('login.html')
+    # print('Hello')
     # ts = TwitterStreamer()
     # api = ts.authenticate()
-    search_words = input("Enter a topic that you are looking for") + " -filter:retweets"
+    # search_words = input("Enter a topic that you are looking for") + " -filter:retweets"
     # date_since = input("Enter a date")
     # return search_words, date_since
-    return search_words
 
 
 consumer_API_key = Access_Keys.consumer_API_key
@@ -46,7 +85,7 @@ class TwitterStreamer:
         tweets = tw.Cursor(api.search,
                            q=search_words,
                            lang="en",
-                           since=date_since).items(50)
+                           since=date_since).items(5)
         return tweets
 
     def display_tweets(self, tweets):
