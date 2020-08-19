@@ -1,3 +1,5 @@
+import json
+
 import nltk
 import textblob
 import tweepy as tw
@@ -15,6 +17,8 @@ basic_stopwords_list = {
     'was', 'we', 'what', 'when', 'why', 'where', 'would', 'with', 'will',
     'you'
 }
+
+data = {}
 
 
 class TwitterStreamer:
@@ -66,10 +70,40 @@ class TwitterStreamer:
 
 
 class MyStreamListener(tw.StreamListener):
+    stream_stop = 0
+    stream_limit = 3
+
+    def on_data(self, raw_data):
+        json_data = json.loads(raw_data)
+        status = tw.Status.parse(self.api, json_data)
+        print(self.stream_stop)
+        if self.stream_stop > self.stream_limit:
+            return False
+        else:
+            self.stream_stop += 1
+            self.on_status(status)
+            return True
 
     def on_status(self, status):
-        analysis = api.get_sentiment(status.text)
-        print(status.text + ": " + analysis)
+        print("in myStream")
+        try:
+            if status.retweeted_status:
+                return
+        except AttributeError:
+            if not status.truncated:
+                analysis = api.get_sentiment(status.text)
+                # print(status.text + ": " + analysis)
+                data.update({status.text: analysis})
+                # print(data)
+            else:
+                analysis = api.get_sentiment(status.extended_tweet['full_text'])
+                # print(status.extended_tweet['full_text'] + ": " + analysis)
+                data.update({status.extended_tweet['full_text']: analysis})
+                # print(data)
+
+    def on_error(self, status_code):
+        if status_code == 420:
+            return False
 
 
 if __name__ == '__main__':
@@ -78,5 +112,8 @@ if __name__ == '__main__':
     United_States = -171.791110603, 18.91619, -66.96466, 71.3577635769
 
     api = TwitterStreamer()
-    myStream = tw.Stream(auth=api.auth, listener=MyStreamListener())
+    myStream = tw.Stream(auth=api.auth, listener=MyStreamListener(), tweet_mode='extended')
+    # print("called myStream")
     myStream.filter(locations=[-9.97708574059, 51.6693012559, -6.03298539878, 55.1316222195], languages=['en'])
+    # print("updated the value of corpus")
+    print(data)
