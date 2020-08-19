@@ -1,0 +1,43 @@
+Docs that i read and refer to
+
+Stack overflow
+GeeksforGeeks
+github.com
+regex101.com
+docs.python.org/3
+
+https://medium.com/the-infinite-machine/app-engine-vs-firebase-welcome-to-bizzaro-world-24c257ef4908
+
+https://towardsdatascience.com/twitter-trends-analysis-using-python-fc78146f2f72
+
+https://stackshare.io/stackups/firebase-vs-google-app-engine#:~:text=Firebase%20belongs%20to%20%22Realtime%20Backend,to%20a%20shared%20data%20structure	
+
+https://developer.twitter.com/en
+
+https://blog.twitter.com/
+
+https://towardsdatascience.com/sentiment-analysis-with-python-part-1-5ce197074184
+
+https://towardsdatascience.com/sentiment-analysis-with-python-part-2-4f71e7bde59a
+
+https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/
+
+https://www.kdnuggets.com/2018/03/5-things-sentiment-analysis-classification.html
+
+https://datasciencegyan.com/stages-of-data-science-in-sentiment-analysis-on-buzzillions-com/
+
+https://monkeylearn.com/sentiment-analysis/
+
+https://www.datacamp.com/community/tutorials/stemming-lemmatization-python
+
+https://towardsdatascience.com/stemming-vs-lemmatization-2daddabcb221
+
+https://www.datacamp.com/community/tutorials/modules-in-python?utm_source=adwords_ppc&utm_campaignid=898687156&utm_adgroupid=48947256715&utm_device=c&utm_keyword=&utm_matchtype=b&utm_network=g&utm_adpostion=&utm_creative=229765585183&utm_targetid=aud-763347114660:dsa-429603003980&utm_loc_interest_ms=&utm_loc_physical_ms=9040163&gclid=CjwKCAjwydP5BRBREiwA-qrCGtJKrE6FWwuA_hVhb7-AVObjCKHT03P6ABJxE6i6J-zW2pKVm8up8RoCiacQAvD_BwE
+
+https://stackoverflow.com/questions/1024049/is-it-pythonic-to-import-inside-functions/1024087
+
+https://docs.python.org/3/tutorial/modules.html
+
+https://link.springer.com/chapter/10.1007/978-3-319-09339-0_62 [paper]
+
+https://gist.github.com/graydon/11198540#file-country-bounding-boxes-py
