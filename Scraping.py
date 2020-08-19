@@ -4,11 +4,6 @@ import tweepy as tw
 
 import Access_Keys
 
-consumer_API_key = Access_Keys.consumer_API_key
-consumer_API_secret_key = Access_Keys.consumer_API_secret_key
-access_token = Access_Keys.access_token
-access_token_secret = Access_Keys.access_token_secret
-
 basic_stopwords_list = {
     'a', 'an', 'all', 'and', 'are', 'as', 'at',
     'be', 'but', 'can', 'do', 'did', 'for',
@@ -33,7 +28,7 @@ class TwitterStreamer:
             self.auth = tw.OAuthHandler(consumer_API_key, consumer_API_secret_key)
             self.auth.set_access_token(access_token, access_token_secret)
             self.api = tw.API(self.auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
-        except:
+        except tw.TweepError:
             print("Authentication Error: Check your Keys")
 
     def preprocess_tweet_text(self, corpus):
