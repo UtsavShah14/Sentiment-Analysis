@@ -41,3 +41,5 @@ https://docs.python.org/3/tutorial/modules.html
 https://link.springer.com/chapter/10.1007/978-3-319-09339-0_62 [paper]
 
 https://gist.github.com/graydon/11198540#file-country-bounding-boxes-py
+
+https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.append.html

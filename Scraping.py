@@ -63,15 +63,12 @@ class TwitterStreamer:
     def get_sentiment(status):
         analysis = textblob.TextBlob(api.preprocess_tweet_text(status))
         if analysis.sentiment.polarity > 0:
-            # tweet_analysis = ['positive']
             tweet_analysis = [status, analysis.sentiment.polarity, analysis.sentiment.subjectivity, 'positive']
             return tweet_analysis
         elif analysis.sentiment.polarity < 0:
-            # tweet_analysis = ['negative']
             tweet_analysis = [status, analysis.sentiment.polarity, analysis.sentiment.subjectivity, 'negative']
             return tweet_analysis
         else:
-            # tweet_analysis = ['neutral']
             tweet_analysis = [status, analysis.sentiment.polarity, analysis.sentiment.subjectivity, 'neutral']
             return tweet_analysis
 
@@ -121,16 +118,12 @@ if __name__ == '__main__':
                                68.1766451354, 7.96553477623, 97.4025614766, 35.4940095078,
                                -171.791110603, 18.91619, -66.96466, 71.3577635769
                                ], languages=['en'])
-    # for element in data:
-    #     print(element + ": " + data[element])
     print("Generating your CSV...")
     dataframe_input = [
         [data[element][0], data[element][1], data[element][2], data[element][3], data[element][4]]
         for element in data]
     try:
         data_frame_result = pd.read_csv("Tweets.csv")
-        # data_frame = pd.DataFrame(data.items(), columns=['Text', 'Sentiment'])
-        # print(data_frame)
         data_frame = pd.DataFrame(
             data=dataframe_input,
             columns=['Text', 'Polarity', 'Subjectivity', 'Country', 'Sentiment'])
@@ -144,8 +137,6 @@ if __name__ == '__main__':
         except PermissionError:
             print("An Error occurred\nPlease close the 'Tweets.csv' file and try again")
     except FileNotFoundError:
-        # pass
-        # data_frame = pd.DataFrame(data=data, columns=['Text', 'Sentiment'])
         data_frame = pd.DataFrame(
             data=dataframe_input,
             columns=['Text', 'Polarity', 'Subjectivity', 'Country', 'Sentiment'])
@@ -155,4 +146,3 @@ if __name__ == '__main__':
         c_s_v = pd.read_csv("Tweets.csv")
         print(c_s_v.head())
         print(c_s_v.tail())
-    print(dataframe_input)
