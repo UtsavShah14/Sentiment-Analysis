@@ -1,6 +1,7 @@
 import json
 
 import nltk
+import pandas as pd
 import textblob
 import tweepy as tw
 
@@ -76,7 +77,6 @@ class MyStreamListener(tw.StreamListener):
     def on_data(self, raw_data):
         json_data = json.loads(raw_data)
         status = tw.Status.parse(self.api, json_data)
-        print(self.stream_stop)
         if self.stream_stop > self.stream_limit:
             return False
         else:
@@ -85,21 +85,16 @@ class MyStreamListener(tw.StreamListener):
             return True
 
     def on_status(self, status):
-        print("in myStream")
         try:
             if status.retweeted_status:
                 return
         except AttributeError:
             if not status.truncated:
                 analysis = api.get_sentiment(status.text)
-                # print(status.text + ": " + analysis)
                 data.update({status.text: analysis})
-                # print(data)
             else:
                 analysis = api.get_sentiment(status.extended_tweet['full_text'])
-                # print(status.extended_tweet['full_text'] + ": " + analysis)
                 data.update({status.extended_tweet['full_text']: analysis})
-                # print(data)
 
     def on_error(self, status_code):
         if status_code == 420:
@@ -113,7 +108,26 @@ if __name__ == '__main__':
 
     api = TwitterStreamer()
     myStream = tw.Stream(auth=api.auth, listener=MyStreamListener(), tweet_mode='extended')
-    # print("called myStream")
-    myStream.filter(locations=[-9.97708574059, 51.6693012559, -6.03298539878, 55.1316222195], languages=['en'])
-    # print("updated the value of corpus")
-    print(data)
+    print("Fetching tweets...")
+    myStream.filter(locations=[-9.97708574059, 51.6693012559, -6.03298539878, 55.1316222195,
+                               68.1766451354, 7.96553477623, 97.4025614766, 35.4940095078,
+                               -171.791110603, 18.91619, -66.96466, 71.3577635769], languages=['en'])
+    # for element in data:
+    #     print(element + ": " + data[element])
+    print("Generating your CSV...")
+    try:
+        data_frame_result = pd.read_csv("Tweets.csv")
+        data_frame = pd.DataFrame(data.items(), columns=['Text', 'Sentiment'])
+        try:
+            data_frame.to_csv("Tweets.csv", encoding='UTF-8-sig', mode='a', index=False, header=False)
+            print("Your 'Tweets.CSV' is ready!")
+            print("Here's a random sample from the CSV...")
+            print(pd.read_csv("Tweets.csv").sample(10))
+        except PermissionError:
+            print("An Error occurred\nPlease close the 'Tweets.csv' file and try again")
+    except FileNotFoundError:
+        data_frame = pd.DataFrame(data.items(), columns=['Text', 'Sentiment'])
+        data_frame.to_csv("Tweets.csv", encoding='UTF-8-sig', mode='a', index=False, header=True)
+        print("Your 'Tweets.CSV' is ready!")
+        print("Here's a random sample from the CSV...")
+        print(pd.read_csv("Tweets.csv").sample(10))
