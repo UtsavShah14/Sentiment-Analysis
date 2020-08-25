@@ -1,15 +1,15 @@
 import nltk
 
-# NLTK's default stopword list was too extensive and eleminated a lot of useful words
+# NLTK's default stopword list was too extensive and eliminated a lot of useful words
 # Hence a self made stopword list.
 basic_stopwords_list = {
     'a', 'an', 'all', 'and', 'are', 'as', 'at',
     'be', 'but', 'can', 'do', 'did', 'for',
-    'get', 'give' 'has', 'had', 'have', 'how',
+    'get', 'give', 'has', 'had', 'have', 'how',
     'i', 'if', 'in', 'is', 'it',
     'me', 'my', 'no',
     'of', 'on', 'or',
-    'that', 'the', 'there' 'this', 'to', 'up',
+    'that', 'the', 'there', 'this', 'to', 'up',
     'was', 'we', 'what', 'when', 'why', 'where', 'would', 'with', 'will',
     'you'
 }
