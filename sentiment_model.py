@@ -1,14 +1,15 @@
+# import pickle
+import joblib
 import pandas as pd
+from sklearn import metrics
+from sklearn import svm
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.svm import LinearSVC
 
 from preprocessing_data import basic_stopwords_list
 
 
-# from nltk.corpus import stopwords
 # import libsvm
 
 
@@ -21,34 +22,48 @@ class TrainingModel:
             self.text_list.append(tweet_csv['Text'][index])
             self.text_sentiment_list.append(tweet_csv['Sentiment'][index])
 
-    def preprocessor(self):
-        ngram_vectorizer = CountVectorizer(
+        self.ngram_vectorizer = CountVectorizer(
             binary=True,
             ngram_range=(1, 3),
             max_features=500,
             stop_words=basic_stopwords_list
         )
 
-        corpus = ngram_vectorizer.fit_transform(self.text_list)
+        self.corpus = self.ngram_vectorizer.fit_transform(self.text_list)
+        # pickle.dump(self.ngram_vectorizer, open('vectorizer.sav', 'wb'))
+        joblib.dump(self.ngram_vectorizer, 'vectorizer.sav')
+        # corpus = ngram_vectorizer.fit_transform(self.text_list)
+
+    def preprocessor(self):
+        # corpus = self.ngram_vectorizer.fit_transform(self.text_list)
 
         x_train, x_val, y_train, y_val = train_test_split(
-            corpus, train.text_sentiment_list, train_size=0.8
+            self.corpus, train.text_sentiment_list, train_size=0.8
         )
         return x_train, x_val, y_train, y_val
 
     @staticmethod
     def svm_classifier(x_train, x_val, y_train, y_val):
-        svm = LinearSVC(C=0.05)
-        svm.fit(x_train, y_train)
-        prediction = svm.predict(x_val)
-        print("Accuracy for SVM: " + str(accuracy_score(y_val, prediction)))
+        svm_classifier = svm.SVC(
+            kernel='linear',
+            C=0.05)
+        svm_classifier.fit(x_train, y_train)
+        prediction = svm_classifier.predict(x_val)
+        print("Accuracy for SVM: " + str(metrics.accuracy_score(y_val, prediction)))
+        # print("Precision:", metrics.precision_score(y_val, prediction))
+        # print("Recall:", metrics.recall_score(y_val, prediction))
+        # pickle.dump(svm_classifier, open('svm_classifier.sav', 'wb'))
+        joblib.dump(svm_classifier, 'svm_classifier.sav')
+        # return svm_classifier
 
     @staticmethod
     def logr_classifier(x_train, x_val, y_train, y_val):
         log_model = LogisticRegression(C=0.5, max_iter=250)
         log_model.fit(x_train, y_train)
         prediction = log_model.predict(x_val)
-        print("Accuracy for LR: " + str(accuracy_score(y_val, prediction)))
+        print("Accuracy for LR: " + str(metrics.accuracy_score(y_val, prediction)))
+        # print("Precision:", metrics.precision_score(y_val, prediction))
+        # print("Recall:", metrics.recall_score(y_val, prediction))
 
 
 if __name__ == '__main__':
@@ -57,6 +72,8 @@ if __name__ == '__main__':
     train.svm_classifier(x_training, x_validation, y_training, y_validation)
     train.logr_classifier(x_training, x_validation, y_training, y_validation)
 
+    # test = train.ngram_vectorizer.transform(['This shit  is insane'])
+    # print(svm_model.predict(test))
     # tweet_csv = pd.read_csv("Tweets.csv")
     # text_list = []
     # text_sentiment_list = []

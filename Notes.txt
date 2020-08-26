@@ -49,3 +49,19 @@ https://www.kaggle.com/arunrk7/nlp-beginner-text-classification-using-lstm
 https://www.kaggle.com/stoicstatic/twitter-sentiment-analysis-for-beginners
 
 https://scikit-learn.org/stable/_downloads/scikit-learn-docs.pdf
+
+https://www.twilio.com/blog/2017/12/sentiment-analysis-scikit-learn.html
+
+https://www.datacamp.com/community/tutorials/stemming-lemmatization-python
+
+https://www.analyticsvidhya.com/blog/2020/05/what-is-tokenization-nlp/
+
+https://www.analyticsvidhya.com/blog/2019/07/how-get-started-nlp-6-unique-ways-perform-tokenization/
+
+http://www.ijarcs.info/index.php/Ijarcs/article/view/2575
+
+https://www.datacamp.com/community/tutorials/svm-classification-scikit-learn-python
+
+https://pdfs.semanticscholar.org/8a15/6da566f15041cff94048d7a24226a19967e2.pdf
+
+https://ieeexplore.ieee.org/abstract/document/8460277

@@ -1,9 +1,6 @@
 # import os
+import joblib
 import pandas as pd
-from joblib import load
-from sklearn.feature_extraction.text import CountVectorizer
-
-from preprocessing_data import basic_stopwords_list
 
 # basic_stopwords_list = {
 #     'a', 'an', 'all', 'and', 'are', 'as', 'at',
@@ -25,14 +22,17 @@ text_list = []
 for i, index in enumerate(tweet_csv.index):
     text_list.append(tweet_csv['Text'][index])
 
-ngram_vectorizer = CountVectorizer(binary=True, ngram_range=(1, 3), stop_words=basic_stopwords_list)
-X = ngram_vectorizer.fit_transform(text_list)
+# ngram_vectorizer = CountVectorizer(binary=True, ngram_range=(1, 3), stop_words=basic_stopwords_list)
+# X = ngram_vectorizer.fit_transform(text_list)
 
-ngram_vectorizer = CountVectorizer(binary=True, ngram_range=(1, 3), stop_words=basic_stopwords_list)
+# vectorizer = pickle.load(open('vectorizer.sav', 'rb'))
+vectorizer = joblib.load('vectorizer.sav')
+# vectorizer = CountVectorizer(binary=True, ngram_range=(1, 3), stop_words=basic_stopwords_list)
 # ngram_vectorizer.fit(["I dont feel so good Mr. Stark"])
-X = ngram_vectorizer.transform(["I dont feel so good Mr. Stark"])
+X = vectorizer.transform(["I dont feel so good Mr. Stark"])
 # print(X)
-svm = load('SVM_classifier')
+# svm = pickle.load(open('svm_classifier.sav', 'rb'))
+svm = joblib.load('svm_classifier.sav')
 print(svm.predict(X))
 
 # print(tw.__version__)
