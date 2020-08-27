@@ -18,5 +18,11 @@ You are logged in as {{ username }}
 </form>
 
 <br><a href='/logout'>click here to log out</a>
+
+{% if prediction %}
+{% for prediction in logr_prediction %}
+{{ query_tweet[loop.index-1] }} - {{ prediction }}<br>
+{% endfor %}
+{% endif %}
 </body>
 </html>

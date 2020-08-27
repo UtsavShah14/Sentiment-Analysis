@@ -1,13 +1,12 @@
-# import pickle
+import time
+
 import joblib
 import pandas as pd
 from sklearn import metrics
 from sklearn import svm
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-
-from preprocessing_data import basic_stopwords_list
 
 
 # import libsvm
@@ -22,20 +21,25 @@ class TrainingModel:
             self.text_list.append(tweet_csv['Text'][index])
             self.text_sentiment_list.append(tweet_csv['Sentiment'][index])
 
-        self.ngram_vectorizer = CountVectorizer(
-            binary=True,
-            ngram_range=(1, 3),
-            max_features=500,
-            stop_words=basic_stopwords_list
+        # self.ngram_vectorizer = CountVectorizer(
+        #     binary=True,
+        #     ngram_range=(1, 3),
+        #     max_features=500,
+        #     stop_words=basic_stopwords_list
+        # )
+        self.vectorizer = TfidfVectorizer(
+            min_df=5,
+            max_df=0.8,
+            sublinear_tf=True,
+            use_idf=True
         )
 
-        self.corpus = self.ngram_vectorizer.fit_transform(self.text_list)
-        # pickle.dump(self.ngram_vectorizer, open('vectorizer.sav', 'wb'))
-        joblib.dump(self.ngram_vectorizer, 'vectorizer.sav')
-        # corpus = ngram_vectorizer.fit_transform(self.text_list)
+        # self.corpus = self.ngram_vectorizer.fit_transform(self.text_list)
+        # joblib.dump(self.ngram_vectorizer, 'vectorizer.sav')
+        self.corpus = self.vectorizer.fit_transform(self.text_list)
+        joblib.dump(self.vectorizer, 'vectorizer.sav')
 
     def preprocessor(self):
-        # corpus = self.ngram_vectorizer.fit_transform(self.text_list)
 
         x_train, x_val, y_train, y_val = train_test_split(
             self.corpus, train.text_sentiment_list, train_size=0.8
@@ -46,31 +50,47 @@ class TrainingModel:
     def svm_classifier(x_train, x_val, y_train, y_val):
         svm_classifier = svm.SVC(
             kernel='linear',
-            C=0.05)
+            C=0.05
+        )
         svm_classifier.fit(x_train, y_train)
+        joblib.dump(svm_classifier, 'svm_classifier.sav')
         prediction = svm_classifier.predict(x_val)
         print("Accuracy for SVM: " + str(metrics.accuracy_score(y_val, prediction)))
-        # print("Precision:", metrics.precision_score(y_val, prediction))
-        # print("Recall:", metrics.recall_score(y_val, prediction))
-        # pickle.dump(svm_classifier, open('svm_classifier.sav', 'wb'))
-        joblib.dump(svm_classifier, 'svm_classifier.sav')
-        # return svm_classifier
+        print("\tPrecision:", str(metrics.precision_score(y_val, prediction, average='weighted')))
+        print("\tRecall:", metrics.recall_score(y_val, prediction, average='weighted'))
+        print("\tF1 score: ", str(metrics.f1_score(y_val, prediction, average='weighted')))
 
     @staticmethod
     def logr_classifier(x_train, x_val, y_train, y_val):
-        log_model = LogisticRegression(C=0.5, max_iter=250)
+        log_model = LogisticRegression(
+            C=0.5,
+            max_iter=250
+        )
         log_model.fit(x_train, y_train)
+        joblib.dump(log_model, 'logr_classifier.sav')
         prediction = log_model.predict(x_val)
         print("Accuracy for LR: " + str(metrics.accuracy_score(y_val, prediction)))
-        # print("Precision:", metrics.precision_score(y_val, prediction))
-        # print("Recall:", metrics.recall_score(y_val, prediction))
+        print("\tPrecision:", str(metrics.precision_score(y_val, prediction, average='weighted')))
+        print("\tRecall:", metrics.recall_score(y_val, prediction, average='weighted'))
+        print("\tF1 score: ", str(metrics.f1_score(y_val, prediction, average='weighted')))
 
 
 if __name__ == '__main__':
     train = TrainingModel()
-    x_training, x_validation, y_training, y_validation = train.preprocessor()
-    train.svm_classifier(x_training, x_validation, y_training, y_validation)
+    x_training, x_validation, y_training, y_validation = train_test_split(
+        train.corpus,
+        train.text_sentiment_list,
+        train_size=0.8
+    )
+
+    t0 = time.time()
     train.logr_classifier(x_training, x_validation, y_training, y_validation)
+    t1 = time.time()
+    train.svm_classifier(x_training, x_validation, y_training, y_validation)
+    t2 = time.time()
+
+    print("Time taken to Train LogR: " + str(t1 - t0))
+    print("Time taken to Train SVM: " + str(t2 - t1))
 
     # test = train.ngram_vectorizer.transform(['This shit  is insane'])
     # print(svm_model.predict(test))
