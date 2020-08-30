@@ -5,6 +5,7 @@ import plotly.express as px
 import tweepy as tw
 
 import Access_Keys
+from country import country_bounding_boxes
 
 consumer_API_key = Access_Keys.consumer_API_key
 consumer_API_secret_key = Access_Keys.consumer_API_secret_key
@@ -19,6 +20,7 @@ app.secret_key = 'hello'
 def index():
     if 'username' in f.session:
         template_values = {
+            'country_list': country_bounding_boxes,
             'test': None,
             'username': f.session['username'],
             'query_tweet': None,
@@ -48,10 +50,21 @@ def logout():
 @app.route('/output', methods=['POST'])
 def tweet_search():
     if f.request.method == 'POST':
+        # search_word, date_since, location = ts.request_input()
         search_word, date_since = ts.request_input()
+        # print(country_bounding_boxes[location][1])
+        # location = list(country_bounding_boxes[location][1])
+        # location.pop()
+        # location = del location[-2]
+        # print(location)
+        # print(country_bounding_boxes[location][1])
+        # tweets = ts.get_tweet(search_word, date_since, country_bounding_boxes[location][1], api)
         tweets = ts.get_tweet(search_word, date_since, api)
-
         query_tweet, query_location = ts.tweet_to_list(tweets)
+
+        if not query_tweet:
+            f.flash("Could not retrieve any tweets")
+            return f.render_template('index.html')
 
         svm_prediction, logr_prediction = ts.predict_values(query_tweet)
 
@@ -62,6 +75,7 @@ def tweet_search():
 
         test = ts.plot_graph(percentage_positive, percentage_negative, percentage_neutral)
         template_values = {
+            'country_list': country_bounding_boxes,
             'test': test,
             'username': f.session['username'],
             'query_tweet': query_tweet,
@@ -84,11 +98,13 @@ class TwitterStreamer:
         return api
 
     @staticmethod
+    # def get_tweet(search_words, date_since, location, api_call):
     def get_tweet(search_words, date_since, api_call):
         max_tweets = 20
         tweets = tw.Cursor(
             api_call.search,
             q=search_words,
+            # geocode=location,
             lang="en",
             since=date_since,
             tweet_mode='extended'
@@ -107,6 +123,7 @@ class TwitterStreamer:
     def request_input():
         search_word = f.request.form['search word'] + '-filter:retweets'
         date_since = f.request.form['date']
+        # location = f.request.form['location']
         return search_word, date_since
 
     @staticmethod
