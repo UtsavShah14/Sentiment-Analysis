@@ -19,8 +19,12 @@ app.secret_key = 'hello'
 def index():
     if 'username' in f.session:
         template_values = {
+            'test': None,
             'username': f.session['username'],
-            'prediction': False
+            'query_tweet': None,
+            'prediction': False,
+            'logr_prediction': None,
+            'svm_prediction': None
         }
         return f.render_template('index.html', **template_values)
     return "You are not logged in, please login in to continue.<br><a href = '/login'>" + "click here to login</a>"
@@ -41,7 +45,7 @@ def logout():
     return f.redirect(f.url_for('index'))
 
 
-@app.route('/output', methods=['POST', 'GET'])
+@app.route('/output', methods=['POST'])
 def tweet_search():
     if f.request.method == 'POST':
         search_word, date_since = ts.request_input()
@@ -56,9 +60,9 @@ def tweet_search():
         percentage_positive, percentage_negative, percentage_neutral = ts.get_percentage(
             svm_prediction, logr_prediction, total_tweets)
 
-        ts.plot_graph(percentage_positive, percentage_negative, percentage_neutral)
-
+        test = ts.plot_graph(percentage_positive, percentage_negative, percentage_neutral)
         template_values = {
+            'test': test,
             'username': f.session['username'],
             'query_tweet': query_tweet,
             'prediction': True,
@@ -143,10 +147,35 @@ class TwitterStreamer:
 
     @staticmethod
     def plot_graph(percentage_positive, percentage_negative, percentage_neutral):
-        fig = px.pie(names=['positive', 'negative', 'neutral'],
-                     values=[percentage_positive, percentage_negative, percentage_neutral],
-                     color=['r', 'b', 'g'])
-        fig.show()
+        categories = ['positive', 'negative', 'neutral']
+        values = [percentage_positive, percentage_negative, percentage_neutral]
+        colour = {'positive': 'Green', 'negative': 'Red', 'neutral': 'Yellow'}
+        data = [{
+            'values': values,
+            'labels': categories,
+
+            'type': 'pie'
+        }]
+        fig = px.pie(names=categories,
+                     title="Public Sentiment",
+                     values=values,
+                     color=categories,
+                     color_discrete_map=colour)
+        # fig = go.Figure(data=go.pie(
+        #     x=categories,
+        #     y=values
+        # )
+        # fig.update_traces(textposition='inside', textinfo='percent+label')
+        # sizes = [257, 223, 520]
+        # explode = (0.1, 0, 0)  # explode 1st slice
+        # colors = ['gold', 'yellowgreen', 'lightcoral']
+        # plot.pie(values, explode=explode, labels=categories, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
+        # plot.axis('equal')
+        test = fig
+        # test = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder),
+        # test = fig.show(auto_open=False)
+        return data
+        # return test
 
 
 if __name__ == '__main__':
