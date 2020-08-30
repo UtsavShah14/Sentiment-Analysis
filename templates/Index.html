@@ -7,47 +7,54 @@
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-<!--<p>This is the landing page of our site</p>-->
-<!--<p>Since this is a guest site, we will not display anything here.</p>-->
-<!--<p>But, you can login here</p>-->
-<!--<button type="submit">Login</button>-->
+
 <h1 style="text-align: center">Welcome to Sentiment Analysis WebApplication</h1>
-
-<form action="/output" method="POST">
-    <h2><label for="search word">Enter a search text:</label></h2>
-    <input id="search word" name="search word" placeholder="Donald Trump" type="text">
-    <h2><label for="date">Enter a date: </label></h2>
-    <input id="date" name="date" type="date">
-    <!--    <h2><label for="location">Enter a location: </label></h2>-->
-    <!--    <select id="location" name="location">-->
-    <!--        <option value="world">Global</option>-->
-    <!--        {# % for country in country_list % #}-->
-    <!--        <option value="{# {country} #}">{# { country_list[country][1] } #}</option>-->
-    <!--        {# % endfor % #}-->
-    <!--    </select>-->
-    <p><input type="submit" value="Generate Graph"></p>
-</form>
-
-{% if prediction %}
-<div id="myDiv">
-    <script>
-        var testtest = {
-        {
-            test | safe
-        }
-        }
-        // console.log(testtest);
-        var layout = {
-            height: 600,
-            width: 500
-        };
-        Plotly.newPlot("myDiv", testtest, layout);
-    </script>
+<div style="">
+    <form action="/output" method="POST">
+        <h2><label for="search word">Enter a search text:</label></h2>
+        <input id="search word" name="search word" placeholder="Donald Trump" type="text">
+        <h2><label for="date">Enter a date: </label></h2>
+        <input id="date" name="date" type="date">
+        <h2><label for="location">Enter a location: </label></h2>
+        <select id="location" name="location">
+            <option value="world">Global</option>
+            {% for country in country_list %}
+            <option value="{{country}}">{{ country_list[country][0] }}</option>
+            {% endfor %}
+        </select>
+        <p><input type="submit" value="Generate Graph"></p>
+    </form>
 </div>
-{% for prediction in logr_prediction %}
-{{ query_tweet[loop.index-1] }} - {{ prediction }}<br>
-{% endfor %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+    {% for message in messages %}
+    <h3>{{ message }}</h3>
+    {% endfor %}
+</ul>
 {% endif %}
-
+{% endwith %}
+{% if prediction %}
+<div>
+    <center>
+        <div id="myDiv">
+            <script>
+                var piechart_data = {
+                {
+                    test | safe
+                }
+                }
+                // console.log(testtest);
+                var layout = {
+                    height: 600,
+                    width: 500
+                };
+                Plotly.newPlot("myDiv", piechart_data, layout);
+            </script>
+        </div>
+    </center>
+</div>
+{% endif %}
+</div>
 </body>
 </html>

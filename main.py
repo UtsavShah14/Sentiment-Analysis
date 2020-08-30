@@ -50,8 +50,8 @@ def logout():
 @app.route('/output', methods=['POST'])
 def tweet_search():
     if f.request.method == 'POST':
-        # search_word, date_since, location = ts.request_input()
-        search_word, date_since = ts.request_input()
+        search_word, date_since, location = ts.request_input()
+        # search_word, date_since = ts.request_input()
         # print(country_bounding_boxes[location][1])
         # location = list(country_bounding_boxes[location][1])
         # location.pop()
@@ -59,12 +59,12 @@ def tweet_search():
         # print(location)
         # print(country_bounding_boxes[location][1])
         # tweets = ts.get_tweet(search_word, date_since, country_bounding_boxes[location][1], api)
-        tweets = ts.get_tweet(search_word, date_since, api)
+        tweets = ts.get_tweet(search_word, date_since, location, api)
         query_tweet, query_location = ts.tweet_to_list(tweets)
 
         if not query_tweet:
             f.flash("Could not retrieve any tweets")
-            return f.render_template('index.html')
+            return f.redirect(f.url_for('index'))
 
         svm_prediction, logr_prediction = ts.predict_values(query_tweet)
 
@@ -73,10 +73,10 @@ def tweet_search():
         percentage_positive, percentage_negative, percentage_neutral = ts.get_percentage(
             svm_prediction, logr_prediction, total_tweets)
 
-        test = ts.plot_graph(percentage_positive, percentage_negative, percentage_neutral)
+        graph_data = ts.plot_graph(percentage_positive, percentage_negative, percentage_neutral)
         template_values = {
             'country_list': country_bounding_boxes,
-            'test': test,
+            'test': graph_data,
             'username': f.session['username'],
             'query_tweet': query_tweet,
             'prediction': True,
@@ -98,13 +98,13 @@ class TwitterStreamer:
         return api
 
     @staticmethod
-    # def get_tweet(search_words, date_since, location, api_call):
-    def get_tweet(search_words, date_since, api_call):
+    def get_tweet(search_words, date_since, location, api_call):
+        # def get_tweet(search_words, date_since, api_call):
         max_tweets = 20
         tweets = tw.Cursor(
             api_call.search,
             q=search_words,
-            # geocode=location,
+            geocode=location,
             lang="en",
             since=date_since,
             tweet_mode='extended'
@@ -123,8 +123,21 @@ class TwitterStreamer:
     def request_input():
         search_word = f.request.form['search word'] + '-filter:retweets'
         date_since = f.request.form['date']
-        # location = f.request.form['location']
-        return search_word, date_since
+        geocode = f.request.form['location']
+        if geocode != 'world':
+            geocode = list(country_bounding_boxes[geocode][1])
+            geocode.pop()
+            geocode.pop()
+            geocode.append('3000km')
+            location = ''
+            location = ','.join([str(elem) for elem in geocode])
+            # geocode = geocode.join(geocode)
+            # geocode += ',3000km'
+            print(location)
+        else:
+            location = None
+        # print(location)
+        return search_word, date_since, location
 
     @staticmethod
     def tweet_to_list(tweets):
