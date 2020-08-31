@@ -1,7 +1,6 @@
 import flask as f
 import joblib
 import pandas as pd
-import plotly.express as px
 import tweepy as tw
 
 import Access_Keys
@@ -51,14 +50,6 @@ def logout():
 def tweet_search():
     if f.request.method == 'POST':
         search_word, date_since, location = ts.request_input()
-        # search_word, date_since = ts.request_input()
-        # print(country_bounding_boxes[location][1])
-        # location = list(country_bounding_boxes[location][1])
-        # location.pop()
-        # location = del location[-2]
-        # print(location)
-        # print(country_bounding_boxes[location][1])
-        # tweets = ts.get_tweet(search_word, date_since, country_bounding_boxes[location][1], api)
         tweets = ts.get_tweet(search_word, date_since, location, api)
         query_tweet, query_location = ts.tweet_to_list(tweets)
 
@@ -99,7 +90,6 @@ class TwitterStreamer:
 
     @staticmethod
     def get_tweet(search_words, date_since, location, api_call):
-        # def get_tweet(search_words, date_since, api_call):
         max_tweets = 20
         tweets = tw.Cursor(
             api_call.search,
@@ -129,14 +119,9 @@ class TwitterStreamer:
             geocode.pop()
             geocode.pop()
             geocode.append('3000km')
-            location = ''
             location = ','.join([str(elem) for elem in geocode])
-            # geocode = geocode.join(geocode)
-            # geocode += ',3000km'
-            print(location)
         else:
             location = None
-        # print(location)
         return search_word, date_since, location
 
     @staticmethod
@@ -179,33 +164,20 @@ class TwitterStreamer:
     def plot_graph(percentage_positive, percentage_negative, percentage_neutral):
         categories = ['positive', 'negative', 'neutral']
         values = [percentage_positive, percentage_negative, percentage_neutral]
-        colour = {'positive': 'Green', 'negative': 'Red', 'neutral': 'Yellow'}
+        # color = {'positive': 'Green', 'negative': 'Red', 'neutral': 'Yellow'}
+        color = ['Green', 'Red', 'Yellow']
         data = [{
             'values': values,
             'labels': categories,
-
-            'type': 'pie'
+            'hole': '0.4',
+            'type': 'pie',
+            'marker': {
+                'colors': color
+            },
+            'textinfo': 'label+percent',
+            'hoverinfo': 'label+percent',
         }]
-        fig = px.pie(names=categories,
-                     title="Public Sentiment",
-                     values=values,
-                     color=categories,
-                     color_discrete_map=colour)
-        # fig = go.Figure(data=go.pie(
-        #     x=categories,
-        #     y=values
-        # )
-        # fig.update_traces(textposition='inside', textinfo='percent+label')
-        # sizes = [257, 223, 520]
-        # explode = (0.1, 0, 0)  # explode 1st slice
-        # colors = ['gold', 'yellowgreen', 'lightcoral']
-        # plot.pie(values, explode=explode, labels=categories, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
-        # plot.axis('equal')
-        test = fig
-        # test = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder),
-        # test = fig.show(auto_open=False)
         return data
-        # return test
 
 
 if __name__ == '__main__':
