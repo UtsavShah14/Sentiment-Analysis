@@ -65,3 +65,5 @@ https://www.datacamp.com/community/tutorials/svm-classification-scikit-learn-pyt
 https://pdfs.semanticscholar.org/8a15/6da566f15041cff94048d7a24226a19967e2.pdf
 
 https://ieeexplore.ieee.org/abstract/document/8460277
+
+https://machinelearningmastery.com/roc-curves-and-precision-recall-curves-for-classification-in-python/#:~:text=with%20sample%20code).-,ROC%20Curves%20and%20AUC%20in%20Python,probabilities%20for%20the%201%20class.&text=The%20AUC%20for%20the%20ROC,using%20the%20roc_auc_score()%20function.

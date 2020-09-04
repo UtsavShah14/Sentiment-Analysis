@@ -165,7 +165,7 @@ class TwitterStreamer:
         categories = ['positive', 'negative', 'neutral']
         values = [percentage_positive, percentage_negative, percentage_neutral]
         # color = {'positive': 'Green', 'negative': 'Red', 'neutral': 'Yellow'}
-        color = ['Green', 'Red', 'Yellow']
+        color = ['#158467', '#e84a5f', '#fddb3a']
         data = [{
             'values': values,
             'labels': categories,

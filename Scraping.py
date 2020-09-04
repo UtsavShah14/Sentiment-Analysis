@@ -32,17 +32,11 @@ class TwitterStreamer:
             print("Authentication Error: Check your Keys")
 
     @staticmethod
-    # Function that processes(cleans) the document for any unwanted/ irregular data
-    def preprocess_tweet_text(corpus):
-        return preprocessing_data.lemmatize_status(
-            preprocessing_data.remove_stopwords(corpus))
-
-    @staticmethod
     # Using textblob, we get the sentiment of the tweet by a random user.
     # Sentiment is checked on cleaned text of the raw tweet
     # tweet_analysis stores a list of desired output
     def get_sentiment(status):
-        analysis = textblob.TextBlob(api.preprocess_tweet_text(status))
+        analysis = textblob.TextBlob(preprocessing_data.get_clean_text(status))
         if analysis.sentiment.polarity > 0:
             tweet_analysis = [status, analysis.sentiment.polarity, analysis.sentiment.subjectivity, 'positive']
             return tweet_analysis
