@@ -5,6 +5,7 @@ import tweepy as tw
 
 import Access_Keys
 from country import country_bounding_boxes
+import preprocessing_data
 
 consumer_API_key = Access_Keys.consumer_API_key
 consumer_API_secret_key = Access_Keys.consumer_API_secret_key
@@ -90,7 +91,7 @@ class TwitterStreamer:
 
     @staticmethod
     def get_tweet(search_words, date_since, location, api_call):
-        max_tweets = 20
+        max_tweets = 500
         tweets = tw.Cursor(
             api_call.search,
             q=search_words,
@@ -129,7 +130,7 @@ class TwitterStreamer:
         query_tweet = []
         query_location = []
         for tweet in tweets:
-            query_tweet.append(tweet.full_text)
+            query_tweet.append(preprocessing_data.get_clean_text(tweet.full_text))
             query_location.append(tweet.user.location)
         return query_tweet, query_location
 

@@ -43,7 +43,8 @@ class TrainingModel:
         t0 = time.time()
         svm_classifier = svm.SVC(
             kernel='linear',
-            C=0.05
+            C=0.05,
+            gamma='scale'
         )
         svm_classifier.fit(x_train, y_train)
         joblib.dump(svm_classifier, 'svm_classifier.sav')
@@ -107,7 +108,7 @@ if __name__ == '__main__':
     x_training, x_validation, y_training, y_validation = train_test_split(
         train.corpus,
         train.text_sentiment_list,
-        train_size=0.8
+        train_size=0.9
     )
 
     train.naive_bayes(x_training, x_validation, y_training, y_validation)
