@@ -43,6 +43,7 @@ def lemmatize_status(status):
     return full_string
 
 
+# The get_clean_text method calls the above two functions and processes the text received.
 def get_clean_text(status_text):
     join_text = []
     clean_text = lemmatize_status(remove_stopwords(status_text))
